@@ -1,0 +1,112 @@
+<!DOCTYPE html> <!-- Declares HTML5 document type -->
+<html lang="en"> <!-- Starts the HTML document and sets language -->
+<head> <!-- Starts the head section -->
+  <meta charset="UTF-8"> <!-- Sets the character encoding -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Makes layout responsive on mobile -->
+  <title>Key Statistics Counter</title> <!-- Sets the browser tab title -->
+  <style> /* Starts CSS styling block */
+    body { /* Styles the page body */
+      margin: 0; /* Removes default margin */
+      font-family: Arial, sans-serif; /* Sets a clean font */
+      display: flex; /* Uses flex layout */
+      justify-content: center; /* Centers horizontally */
+      align-items: center; /* Centers vertically */
+      height: 100vh; /* Makes height fill viewport */
+      background: transparent; /* Transparent background for embedding */
+    }
+    .card { /* Styles the counter container */
+      background: rgba(0,0,0,0.65); /* Dark translucent background */
+      color: #fff; /* White text */
+      padding: 18px 22px; /* Space inside the card */
+      border-radius: 10px; /* Rounded corners */
+      width: 320px; /* Fixed width */
+      box-sizing: border-box; /* Includes padding in width */
+    }
+    .title { /* Styles the title text */
+      font-size: 18px; /* Sets title size */
+      font-weight: 700; /* Makes title bold */
+      margin-bottom: 12px; /* Adds space below title */
+      letter-spacing: 0.2px; /* Slight spacing for readability */
+    }
+    .row { /* Styles each statistic row */
+      display: flex; /* Uses flex layout */
+      justify-content: space-between; /* Separates label and value */
+      align-items: baseline; /* Aligns text baseline */
+      margin: 10px 0; /* Vertical spacing between rows */
+      gap: 10px; /* Space between label and value */
+    }
+    .label { /* Styles the left label */
+      font-size: 14px; /* Sets label size */
+      opacity: 0.9; /* Slightly softens label */
+    }
+    .value { /* Styles the number/value */
+      font-size: 18px; /* Sets value size */
+      font-weight: 700; /* Makes value bold */
+      text-align: right; /* Aligns values to the right */
+      white-space: nowrap; /* Prevents wrapping */
+    }
+  </style> <!-- Ends CSS styling block -->
+</head> <!-- Ends the head section -->
+<body> <!-- Starts the body section -->
+  <div class="card"> <!-- Starts the main card container -->
+    <div class="title">Key Statistics</div> <!-- Adds the card title -->
+    
+    <div class="row"> <!-- Row for total distance -->
+      <div class="label">Total Distance:</div> <!-- Label -->
+      <div class="value"><span id="distance">0.0</span> Miles</div> <!-- Animated value -->
+    </div> <!-- Ends row -->
+
+    <div class="row"> <!-- Row for total assets -->
+      <div class="label">Total Assets Digitized:</div> <!-- Label -->
+      <div class="value"><span id="assets">0</span> Posts</div> <!-- Animated value -->
+    </div> <!-- Ends row -->
+
+    <div class="row"> <!-- Row for image precision -->
+      <div class="label">Image Precision:</div> <!-- Label -->
+      <div class="value">Sub-Inch Clarity</div> <!-- Static text -->
+    </div> <!-- Ends row -->
+  </div> <!-- Ends the card container -->
+
+  <script> /* Starts JavaScript block */
+
+    function animateCount(elementId, startValue, endValue, durationMs, decimals) { /* Defines a count up animation function */
+      const element = document.getElementById(elementId); /* Finds the HTML element by id */
+      const startTime = performance.now(); /* Records the animation start time */
+
+      function update(currentTime) { /* Defines the animation update loop */
+        const elapsed = currentTime - startTime; /* Calculates elapsed time */
+        const progress = Math.min(elapsed / durationMs, 1); /* Converts elapsed time to progress 0 to 1 */
+        const currentValue = startValue + (endValue - startValue) * progress; /* Calculates current value based on progress */
+        element.textContent = currentValue.toFixed(decimals); /* Updates the element text with correct decimals */
+
+        if (progress < 1) { /* Checks if animation is still running */
+          requestAnimationFrame(update); /* Requests next animation frame */
+        }
+      }
+
+      requestAnimationFrame(update); /* Starts the animation loop */
+    }
+
+    function runCountersOnceWhenVisible() { /* Defines a function that triggers counters when visible */
+      const card = document.querySelector(".card"); /* Selects the card container */
+      let hasRun = false; /* Creates a flag so it only runs once */
+
+      const observer = new IntersectionObserver((entries) => { /* Creates observer for visibility */
+        entries.forEach(entry => { /* Loops through observed entries */
+          if (entry.isIntersecting && !hasRun) { /* Checks if card is visible and not run before */
+            hasRun = true; /* Marks as run */
+            animateCount("distance", 0, 21.5, 900, 1); /* Animates distance to 21.5 */
+            animateCount("assets", 0, 30323, 1000, 0); /* Animates assets to 30323 */
+            observer.disconnect(); /* Stops observing once run */
+          }
+        });
+      }, { threshold: 0.6 }); /* Runs when 60% visible */
+
+      observer.observe(card); /* Starts observing the card */
+    }
+
+    runCountersOnceWhenVisible(); /* Calls the function to set up scroll triggered animation */
+
+  </script> <!-- Ends JavaScript block -->
+</body> <!-- Ends the body section -->
+</html> <!-- Ends the HTML document -->
